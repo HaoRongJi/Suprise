@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    >
+
+    <Button
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/zu_btn_del"
+        android:text="-"
+        />
+
+    <EditText
+        android:id="@+id/zu_ed"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignBaseline="@+id/zu_btn_del"
+        android:layout_alignBottom="@+id/zu_btn_del"
+        android:layout_centerHorizontal="true"
+        android:background="@null" />
+
+
+    <Button
+        android:id="@+id/zu_btn_add"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignBaseline="@+id/zu_ed"
+        android:layout_alignBottom="@+id/zu_ed"
+        android:layout_marginLeft="81dp"
+        android:layout_marginStart="81dp"
+        android:layout_toEndOf="@+id/zu_btn_del"
+        android:layout_toRightOf="@+id/zu_btn_del"
+        android:text="+" />
+
+</RelativeLayout>

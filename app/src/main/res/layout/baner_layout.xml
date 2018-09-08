@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.stx.xhb.xbanner.XBanner
+    xmlns:banner="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/banner_1"
+    android:layout_width="match_parent"
+    android:layout_height="180dp"
+    banner:pointsPosition="CENTER"
+    banner:AutoPlayTime="3000"
+    banner:pointsContainerBackground="#44aaaaaa"
+    banner:pointsVisibility="true"
+    banner:pointSelect="@drawable/shape_point_select"
+    banner:pointNormal="@drawable/shape_point_unselect"/>
+
