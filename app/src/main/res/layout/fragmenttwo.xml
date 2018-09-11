@@ -1,19 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+<com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/smart_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <com.scwang.smartrefresh.layout.SmartRefreshLayout
-        android:id="@+id/smart_layout"
+
+
+    <LinearLayout
+        android:id="@+id/classes_linear_v"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_view"
+        <include layout="@layout/header_include"/>
+
+
+        <LinearLayout
+            android:id="@+id/classes_linear"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
-    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
-</LinearLayout>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/left_recycler_view"
+                android:layout_width="0dp"
+
+                android:layout_height="match_parent"
+                android:layout_weight="3"></android.support.v7.widget.RecyclerView>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/right_recycler_view"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="7"></android.support.v7.widget.RecyclerView>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+
+
+</com.scwang.smartrefresh.layout.SmartRefreshLayout>

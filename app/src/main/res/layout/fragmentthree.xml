@@ -5,14 +5,14 @@
     >
 
     <com.scwang.smartrefresh.layout.SmartRefreshLayout
-        android:id="@+id/smart_layout"
+        android:id="@+id/smart_layout_3"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_view"
+        <WebView
+            android:id="@+id/baidu_webview"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+            android:layout_height="match_parent"></WebView>
 
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 

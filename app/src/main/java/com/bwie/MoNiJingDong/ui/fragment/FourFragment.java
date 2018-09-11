@@ -178,7 +178,7 @@ public class FourFragment extends BaseMvpFragment<CartModel,CartPresenter> imple
                 }
             }
         }
-        fPrice.setText("总价：¥"+totalprice);
+        fPrice.setText("合计：￥"+totalprice);
     }
 
     @Override

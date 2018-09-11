@@ -67,7 +67,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/f_price"
-            android:text="price:0.0"
+            android:text="合计：￥0.00"
             android:textSize="18sp"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/qx_tv"

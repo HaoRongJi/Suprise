@@ -36,8 +36,10 @@ import com.hao.base.base.mvp.BaseMvpFragment;
 import com.hao.base.base.mvp.BasePresenter;
 import com.scwang.smartrefresh.header.MaterialHeader;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
 import com.scwang.smartrefresh.layout.footer.BallPulseFooter;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.stx.xhb.xbanner.XBanner;
 
 import org.greenrobot.eventbus.EventBus;
@@ -65,7 +67,10 @@ public class OneFragment extends BaseMvpFragment<HomeConstract.ProductModel, Hom
     private ViewPager homeViewpager;
     private int currentPage;
     private MyViewPagerAdapter myViewPagerAdapter;
-    private GridView classes_grid;
+    private View classes_grid;
+    private GridView classesView;
+    private LayoutInflater inflater;
+    private ImageView img_wennituijian;
 
 
     @Override
@@ -92,6 +97,15 @@ public class OneFragment extends BaseMvpFragment<HomeConstract.ProductModel, Hom
         smartLayout.setRefreshHeader(new MaterialHeader(getActivity()).setShowBezierWave(true));*/
         //设置 Footer 为 球脉冲
         smartLayout.setRefreshFooter(new BallPulseFooter(getActivity()).setSpinnerStyle(SpinnerStyle.Scale));
+        inflater=LayoutInflater.from(getActivity());
+        smartLayout.autoRefresh(2000);
+        smartLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshlayout) {
+                presenter.homeData();
+                refreshlayout.finishRefresh(2000,true);
+            }
+        });
     }
 
 
@@ -131,7 +145,10 @@ public class OneFragment extends BaseMvpFragment<HomeConstract.ProductModel, Hom
 
     @Override
     public void onSuccess(final HomeBean homeBean) {
+
         //Toast.makeText(mActivity, homeBean.toString(), Toast.LENGTH_SHORT).show();
+
+        EventBus.getDefault().postSticky(homeBean);
 
         strings = new ArrayList<>();
 
@@ -142,7 +159,7 @@ public class OneFragment extends BaseMvpFragment<HomeConstract.ProductModel, Hom
 
 
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-        homeAdapter = new HomeAdapter(R.layout.product_item_layout, homeBean.getData().getTuijian().getList());
+        homeAdapter = new HomeAdapter(R.layout.product_item_layout, homeBean.getData().getTuijian().getList(),getActivity());
         recyclerView.setAdapter(homeAdapter);
 
         homeAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
@@ -179,10 +196,16 @@ public class OneFragment extends BaseMvpFragment<HomeConstract.ProductModel, Hom
 
         classes(homeBean);
 
+        img_wennituijian = (ImageView) getLayoutInflater().inflate(R.layout.weinituijian, (ViewGroup) recyclerView.getParent(), false);
+
+        homeAdapter.addHeaderView(img_wennituijian);
 
     }
 
     private void classes(HomeBean homeBean) {
+
+
+
         View view_grid = View.inflate(getContext(), R.layout.view_grid, null);
         View.inflate(getContext(),R.layout.classes_layout,null);
         homeViewpager = view_grid.findViewById(R.id.home_viewpager);
@@ -215,12 +238,13 @@ public class OneFragment extends BaseMvpFragment<HomeConstract.ProductModel, Hom
             //每个页面都是inflate出一个新实例
             /*GridView gridView = (GridView) inflater.inflate(R.layout.classes_layout,((TextHolder2) holder).home_viewPager,false);
             gridView.setAdapter(new MyGridViewAdapter(context,i,mPageSize,data.getFenlei()));*/
-            View classesView = getLayoutInflater().inflate(R.layout.classes_layout, homeViewpager, false);
+            classesView = (GridView) inflater.inflate(R.layout.classes_layout, homeViewpager, false);
             classes_grid = classesView.findViewById(R.id.home_viewpager_gridView);
-            classGridAdapter = new ClassGridAdapter(getActivity(), mPageSize,i, homeBean.getData().getFenlei());
-            classes_grid.setAdapter(classGridAdapter);
+
+            classGridAdapter = new ClassGridAdapter(getContext(), i,mPageSize, homeBean.getData().getFenlei());
+            classesView.setAdapter(classGridAdapter);
             homeAdapter.addHeaderView(classes_grid);
-            viewPagerList.add(classesView);
+            viewPagerList.add(classes_grid);
         }
     }
 

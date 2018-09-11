@@ -2,6 +2,7 @@ package com.bwie.MoNiJingDong.ui.activity;
 
 import android.os.Bundle;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -22,10 +23,10 @@ public class DetailsActivity extends BaseMvpActivity {
     WebView webView;
     @BindView(R.id.dt_back_img)
     ImageView dtBackImg;
-    @BindView(R.id.inCart)
+    /*@BindView(R.id.inCart)
     Button inCart;
     @BindView(R.id.addCart)
-    Button addCart;
+    Button addCart;*/
 
 
     @Override
@@ -53,6 +54,15 @@ public class DetailsActivity extends BaseMvpActivity {
     public void showDetails(String details) {
 
         webView.loadUrl(details);
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return true;
+            }
+        });
+        webView.getSettings().setJavaScriptEnabled(true);
+
 
     }
 
@@ -83,23 +93,18 @@ public class DetailsActivity extends BaseMvpActivity {
 
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
-    }
+
 
     @OnClick(R.id.dt_back_img)
     public void onDtBackImgClicked() {
         finish();
     }
 
-    @OnClick(R.id.inCart)
+    /*@OnClick(R.id.inCart)
     public void onInCartClicked() {
     }
 
     @OnClick(R.id.addCart)
     public void onAddCartClicked() {
-    }
+    }*/
 }

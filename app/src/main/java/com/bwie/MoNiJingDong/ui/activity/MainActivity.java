@@ -1,7 +1,10 @@
 package com.bwie.MoNiJingDong.ui.activity;
 
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 
 import com.bwie.MoNiJingDong.R;
 import com.bwie.MoNiJingDong.ui.fragment.FiveFragment;
@@ -14,7 +17,12 @@ import com.hjm.bottomtabbar.BottomTabBar;
 
 public class  MainActivity extends AppCompatActivity {
 
+
+
+
     private BottomTabBar mBottomTabBar;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
