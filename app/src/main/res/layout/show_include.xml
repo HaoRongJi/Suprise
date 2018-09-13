@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    android:gravity="top"
+    android:layout_width="match_parent" android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/finish_img"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="-30dp"
+            android:layout_toLeftOf="@id/procontent_et"
+            android:background="@drawable/ic_arrow_back_black_24dp" />
+
+        <EditText
+            android:id="@+id/procontent_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="40dp"
+            android:background="@drawable/edit_shape"
+            android:hint="请输入想搜索的商品" />
+
+        <TextView
+            android:id="@+id/search_tv"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerInParent="true"
+            android:textSize="15sp"
+            android:layout_marginLeft="-40dp"
+            android:layout_toRightOf="@id/procontent_et"
+            android:text="搜索" />
+
+    </RelativeLayout>
+
+</android.support.v7.widget.Toolbar>
