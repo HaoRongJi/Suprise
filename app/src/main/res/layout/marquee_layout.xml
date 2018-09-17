@@ -1,5 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#F1F1F7"
+    android:layout_width="match_parent" android:layout_height="50dp">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_margin="5dp"
+        android:background="@drawable/linear_shape"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:src="@drawable/jingdongkuaibao"
+            android:layout_width="25dp"
+            android:layout_height="match_parent" />
+        <ImageView
+            android:src="@drawable/kuaibao"
+            android:layout_marginLeft="-5dp"
+            android:layout_width="25dp"
+            android:layout_height="match_parent" />
+
+        <com.sunfusheng.marqueeview.MarqueeView
+            android:id="@+id/marqueeView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            app:mvAnimDuration="1000"
+            app:mvDirection="bottom_to_top"
+            app:mvInterval="3000"
+            app:mvTextColor="#000"
+            app:mvTextSize="10sp"
+            app:mvSingleLine="true"/>
+
+    </LinearLayout>
+
 
 </RelativeLayout>

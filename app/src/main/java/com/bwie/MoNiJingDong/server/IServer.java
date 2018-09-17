@@ -9,12 +9,15 @@ import com.bwie.MoNiJingDong.entity.LoginBean;
 import com.bwie.MoNiJingDong.entity.ProductBean;
 import com.bwie.MoNiJingDong.entity.ProductListBean;
 import com.bwie.MoNiJingDong.entity.RegBean;
+import com.bwie.MoNiJingDong.entity.ShowBean;
 import com.bwie.MoNiJingDong.entity.ShowCartsBean;
 import com.bwie.MoNiJingDong.entity.UpdateCarts;
 import com.bwie.MoNiJingDong.entity.XiangQingBean;
 
 
 import io.reactivex.Observable;
+import okhttp3.FormBody;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
@@ -35,6 +38,9 @@ public interface IServer {
     Observable<ChildClassBean> getChildClassBean(@Query("cid") int cid);
     @POST("product/getProductDetail")
     Observable<XiangQingBean> getXqBean(@Query("pid") int pid);
+
+    @GET("product/searchProducts")
+    Observable<ShowBean> getShowData(@Query("keywords") String key,@Query("page") int page);
     //添加购物车
     @POST("product/addCart")
     Observable<CartsBean> getCarts(@Query("pid") int pid, @Query("uid") int uid);

@@ -20,6 +20,7 @@ public class LeftClassesAdapter extends BaseQuickAdapter<ClassBean.DataBean,Base
     @Override
     protected void convert(BaseViewHolder helper, ClassBean.DataBean item) {
         helper.setText(R.id.classes_text,item.getName());
+
     }
 
 }

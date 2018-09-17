@@ -1,14 +1,22 @@
 package com.bwie.MoNiJingDong.ui.fragment;
 
+import android.app.ProgressDialog;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.FrameLayout;
 
 import com.bwie.MoNiJingDong.R;
 import com.hao.base.base.BaseFragment;
@@ -24,6 +32,7 @@ public class ThreeFragment extends BaseFragment {
     WebView webView;
     @BindView(R.id.smart_layout_3)
     SmartRefreshLayout smartRefreshLayout;
+
 
     @Override
     protected int setLayoutId() {
@@ -56,5 +65,11 @@ public class ThreeFragment extends BaseFragment {
                 refreshlayout.finishRefresh(200);
             }
         });
+
     }
+
+
+
+
+
 }

@@ -1,9 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activity.SearchActivity">
+    tools:context=".ui.activity.SearchActivity"
+    android:orientation="vertical"
+    >
 
-</android.support.constraint.ConstraintLayout>
+    <include layout="@layout/search_include"/>
+
+
+    <LinearLayout
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="最近搜索"
+            android:layout_marginLeft="20dp"
+            />
+
+        <com.example.library.AutoFlowLayout
+            android:id="@+id/con_fl1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+        </com.example.library.AutoFlowLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="热搜"
+            android:layout_marginLeft="20dp"
+            />
+
+        <com.example.library.AutoFlowLayout
+            android:id="@+id/con_fl2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+        </com.example.library.AutoFlowLayout>
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

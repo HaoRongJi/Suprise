@@ -2,6 +2,8 @@ package com.bwie.MoNiJingDong.ui.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
@@ -13,7 +15,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -21,11 +25,14 @@ import com.bwie.MoNiJingDong.R;
 import com.bwie.MoNiJingDong.adapter.ClassGridAdapter;
 import com.bwie.MoNiJingDong.adapter.HomeAdapter;
 import com.bwie.MoNiJingDong.adapter.MyViewPagerAdapter;
+import com.bwie.MoNiJingDong.adapter.ScrollHomeAdapter;
 import com.bwie.MoNiJingDong.constrat.HomeConstract;
 import com.bwie.MoNiJingDong.entity.HomeBean;
 import com.bwie.MoNiJingDong.entity.ProductBean;
+import com.bwie.MoNiJingDong.entity.SuccessEntity;
 import com.bwie.MoNiJingDong.presenter.home.HomePresenter;
 import com.bwie.MoNiJingDong.ui.activity.DetailsActivity;
+import com.bwie.MoNiJingDong.ui.activity.SearchActivity;
 import com.bwie.MoNiJingDong.utils.RetrofitUtils;
 import com.bwie.MoNiJingDong.view.home.IHomeView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -41,12 +48,17 @@ import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
 import com.scwang.smartrefresh.layout.footer.BallPulseFooter;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.stx.xhb.xbanner.XBanner;
+import com.sunfusheng.marqueeview.MarqueeView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -70,7 +82,29 @@ public class OneFragment extends BaseMvpFragment<HomeConstract.ProductModel, Hom
     private View classes_grid;
     private GridView classesView;
     private LayoutInflater inflater;
-    private ImageView img_wennituijian;
+    private View marqueeLayout;
+    private MarqueeView marqueeView;
+    private View procontentEt;
+    private Intent searchIntent;
+    private View miaoshaLayout;
+    private RecyclerView mHome_miaosha_recy;
+    private TextView miaosha_time;
+    private TextView miaosha_shi;
+    private TextView miaosha_minter;
+    private TextView miaosha_second;
+    private List<HomeBean.DataBean.MiaoshaBean.ListBean> mList;
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            setTime();
+            sendEmptyMessageDelayed(0, 1000);
+        }
+    };
+    private View scrollLayout;
+    private ScrollHomeAdapter scrollHomeAdapter;
+    private View inflate;
 
 
     @Override
@@ -93,17 +127,28 @@ public class OneFragment extends BaseMvpFragment<HomeConstract.ProductModel, Hom
 //        EventBus.getDefault().register(this);
         smartLayout = mRootView.findViewById(R.id.smart_layout);
         recyclerView = mRootView.findViewById(R.id.recycler_view);
+        procontentEt = mRootView.findViewById(R.id.procontent_et);
         /*smartLayout.setRefreshHeader(new MaterialHeader(getActivity()).setColorSchemeColors(R.color.colorAccent));
         smartLayout.setRefreshHeader(new MaterialHeader(getActivity()).setShowBezierWave(true));*/
         //设置 Footer 为 球脉冲
         smartLayout.setRefreshFooter(new BallPulseFooter(getActivity()).setSpinnerStyle(SpinnerStyle.Scale));
         inflater=LayoutInflater.from(getActivity());
-        smartLayout.autoRefresh(2000);
+        smartLayout.autoRefresh(500);
         smartLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshlayout) {
                 presenter.homeData();
-                refreshlayout.finishRefresh(2000,true);
+                refreshlayout.finishRefresh(500,true);
+            }
+        });
+
+        procontentEt.setFocusable(false);
+
+        procontentEt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchIntent = new Intent(getActivity(), SearchActivity.class);
+                startActivity(searchIntent/*,ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle()*/);
             }
         });
     }
@@ -113,7 +158,6 @@ public class OneFragment extends BaseMvpFragment<HomeConstract.ProductModel, Hom
     protected void initData() {
         super.initData();
         presenter.homeData();
-
 
     }
 
@@ -149,6 +193,8 @@ public class OneFragment extends BaseMvpFragment<HomeConstract.ProductModel, Hom
         //Toast.makeText(mActivity, homeBean.toString(), Toast.LENGTH_SHORT).show();
 
         EventBus.getDefault().postSticky(homeBean);
+
+        EventBus.getDefault().post(new SuccessEntity(homeBean));
 
         strings = new ArrayList<>();
 
@@ -196,10 +242,114 @@ public class OneFragment extends BaseMvpFragment<HomeConstract.ProductModel, Hom
 
         classes(homeBean);
 
-        img_wennituijian = (ImageView) getLayoutInflater().inflate(R.layout.weinituijian, (ViewGroup) recyclerView.getParent(), false);
+        marqueeLayout = getLayoutInflater().inflate(R.layout.marquee_layout, (ViewGroup) recyclerView.getParent(), false);
 
-        homeAdapter.addHeaderView(img_wennituijian);
+        List<String> info = new ArrayList<>();
+        info.add("1. 大家好，我是孙福生。");
+        info.add("2. 欢迎大家关注我哦！");
+        info.add("3. GitHub帐号：sfsheng0322");
+        info.add("4. 新浪微博：孙福生微博");
+        info.add("5. 个人博客：sunfusheng.com");
+        info.add("6. 微信公众号：孙福生");
 
+        marqueeView = marqueeLayout.findViewById(R.id.marqueeView);
+
+        marqueeView.startWithList(info);
+        marqueeView.startWithList(info, R.anim.anim_bottom_in, R.anim.anim_top_out);
+
+        homeAdapter.addHeaderView(marqueeLayout);
+
+        miaoshaLayout = getLayoutInflater().inflate(R.layout.time_miaosha_layout, (ViewGroup) recyclerView.getParent(), false);
+
+        miaosha_time = miaoshaLayout.findViewById(R.id.tv_miaosha_time);
+        miaosha_shi = miaoshaLayout.findViewById(R.id.tv_miaosha_shi);
+        miaosha_minter = miaoshaLayout.findViewById(R.id.tv_miaosha_minter);
+        miaosha_second = miaoshaLayout.findViewById(R.id.tv_miaosha_second);
+
+        mList = homeBean.getData().getMiaosha().getList();
+        int size=mList.size();
+
+        handler.sendEmptyMessage(0);
+
+        homeAdapter.addHeaderView(miaoshaLayout);
+
+        scrollLayout = getLayoutInflater().inflate(R.layout.scroll_layout, (ViewGroup) recyclerView.getParent(), false);
+        mHome_miaosha_recy=scrollLayout.findViewById(R.id.home_seckill);
+
+
+        mHome_miaosha_recy.setLayoutManager(new GridLayoutManager(getActivity(),size));
+        scrollHomeAdapter = new ScrollHomeAdapter(R.layout.scroll_item_layout, homeBean.getData().getMiaosha().getList());
+        mHome_miaosha_recy.setAdapter(scrollHomeAdapter);
+        scrollHomeAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                Intent intent = new Intent(getContext(), DetailsActivity.class);
+                String detailUrls=homeBean.getData().getMiaosha().getList().get(position).getDetailUrl();
+                EventBus.getDefault().postSticky(detailUrls);
+                startActivity(intent);
+            }
+        });
+        homeAdapter.addHeaderView(scrollLayout);
+
+        inflate = getLayoutInflater().inflate(R.layout.weinituijian, (ViewGroup) recyclerView.getParent(), false);
+
+        homeAdapter.addHeaderView(inflate);
+
+    }
+
+    //秒杀倒计时
+    public void setTime() {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        //df.setTimeZone(TimeZone.getTimeZone("GMT+08:00")); // 不会受系统时区设置的影响,否则时间可能不准确
+        Date curDate = new Date(System.currentTimeMillis());
+        String format = df.format(curDate);
+        Log.i("hour","事件"+format);
+        StringBuffer buffer = new StringBuffer();
+        String substring = format.substring(0, 11);
+        buffer.append(substring);
+        Log.d("ccc", substring);
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        Log.i("hour",hour+"");
+        if (hour % 2 == 0) {
+            miaosha_time.setText( hour+9+ "点场");
+            buffer.append((hour + 2));
+            buffer.append(":00:00");
+        } else if(hour+8==24){
+            hour=-9;
+            miaosha_time.setText( hour+9+ "点场");
+            buffer.append((hour + 2));
+            buffer.append(":00:00");
+
+        }else {
+            miaosha_time.setText(hour+9 + "点场");
+            buffer.append((hour + 1));
+            buffer.append(":00:00");
+        }
+        String totime = buffer.toString();
+        try {
+            java.util.Date date = df.parse(totime);
+            java.util.Date date1 = df.parse(format);
+            long defferenttime = date.getTime() - date1.getTime();
+            long days = defferenttime / (1000 * 60 * 60 * 24);
+            long hours = (defferenttime - days * (1000 * 60 * 60 * 24)) / (1000 * 60 * 60);
+            long minute = (defferenttime - days * (1000 * 60 * 60 * 24) - hours * (1000 * 60 * 60)) / (1000 * 60);
+            long seconds = defferenttime % 60000;
+            long second = Math.round((float) seconds / 1000);
+            miaosha_shi.setText("0" + hours + "");
+            if (minute >= 10) {
+                miaosha_minter.setText(minute + "");
+            } else {
+                miaosha_minter.setText("0" + minute + "");
+            }
+            if (second >= 10) {
+                miaosha_second.setText(second + "");
+            } else {
+                miaosha_second.setText("0" + second + "");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void classes(HomeBean homeBean) {
@@ -241,7 +391,7 @@ public class OneFragment extends BaseMvpFragment<HomeConstract.ProductModel, Hom
             classesView = (GridView) inflater.inflate(R.layout.classes_layout, homeViewpager, false);
             classes_grid = classesView.findViewById(R.id.home_viewpager_gridView);
 
-            classGridAdapter = new ClassGridAdapter(getContext(), i,mPageSize, homeBean.getData().getFenlei());
+            classGridAdapter = new ClassGridAdapter(getContext(), mPageSize,i, homeBean.getData().getFenlei());
             classesView.setAdapter(classGridAdapter);
             homeAdapter.addHeaderView(classes_grid);
             viewPagerList.add(classes_grid);

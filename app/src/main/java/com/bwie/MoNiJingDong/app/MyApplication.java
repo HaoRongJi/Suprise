@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
+import com.tencent.bugly.crashreport.CrashReport;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.log.LoggerInterceptor;
 
@@ -43,6 +44,7 @@ public class MyApplication extends Application {
                     .build();
             //使用自定义OkHttpClient
             OkHttpUtils.initClient(okHttpClient);
+            CrashReport.initCrashReport(getApplicationContext(), "898d0045c7", true);
 
         }
 
