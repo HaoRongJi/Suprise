@@ -5,6 +5,8 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Created by xyj on 2017/6/29.
@@ -64,5 +66,8 @@ public class EncryptUtil {
         String b = decrypt(a);
         System.err.println("解密后: " + b);
     }
+
+
+
 
 }

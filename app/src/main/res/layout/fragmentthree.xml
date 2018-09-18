@@ -9,6 +9,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <com.bwie.MoNiJingDong.widget.MyRefreshHeader
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></com.bwie.MoNiJingDong.widget.MyRefreshHeader>
+
         <WebView
             android:id="@+id/baidu_webview"
             android:layout_width="match_parent"

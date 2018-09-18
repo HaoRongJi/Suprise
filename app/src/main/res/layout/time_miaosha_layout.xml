@@ -15,16 +15,22 @@ android:layout_width="match_parent" android:layout_height="45dp">
     android:background="@drawable/linear_shape"
     android:layout_height="match_parent">
 
-    <TextView
+    <!--<TextView
         android:id="@+id/tv_miaosha"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_gravity="center_vertical"
         android:text="京东秒杀"
-        android:textColor="#f00" />
+        android:textColor="#f00" />-->
+
+    <ImageView
+        android:src="@drawable/qq_miaosha"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" />
 
     <TextView
+        android:layout_marginLeft="@dimen/dp_10"
         android:id="@+id/tv_miaosha_time"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"

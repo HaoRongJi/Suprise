@@ -55,6 +55,7 @@ public class CartItemAdapter extends BaseQuickAdapter<ShowCartsBean.DataBean.Lis
                 }else {
                     listBean.setIscheckbox(false);
                 }
+
                 //局部刷新
                 notifyDataSetChanged();
                 /*通知父类刷新*/

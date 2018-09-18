@@ -35,6 +35,7 @@ import com.bwie.MoNiJingDong.ui.activity.DetailsActivity;
 import com.bwie.MoNiJingDong.ui.activity.SearchActivity;
 import com.bwie.MoNiJingDong.utils.RetrofitUtils;
 import com.bwie.MoNiJingDong.view.home.IHomeView;
+import com.bwie.MoNiJingDong.widget.SpaceItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.gyf.barlibrary.ImmersionBar;
@@ -76,10 +77,9 @@ public class OneFragment extends BaseMvpFragment<HomeConstract.ProductModel, Hom
     private int totalPage;
     private ArrayList<View> viewPagerList;
     private int mPageSize = 8;
-    private ViewPager homeViewpager;
+
     private int currentPage;
     private MyViewPagerAdapter myViewPagerAdapter;
-    private View classes_grid;
     private GridView classesView;
     private LayoutInflater inflater;
     private View marqueeLayout;
@@ -94,6 +94,8 @@ public class OneFragment extends BaseMvpFragment<HomeConstract.ProductModel, Hom
     private TextView miaosha_second;
     private List<HomeBean.DataBean.MiaoshaBean.ListBean> mList;
 
+
+
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -105,6 +107,7 @@ public class OneFragment extends BaseMvpFragment<HomeConstract.ProductModel, Hom
     private View scrollLayout;
     private ScrollHomeAdapter scrollHomeAdapter;
     private View inflate;
+    private ViewPager view_grid;
 
 
     @Override
@@ -124,13 +127,9 @@ public class OneFragment extends BaseMvpFragment<HomeConstract.ProductModel, Hom
         super.initView();
 
         ImmersionBar.with(this).init();
-//        EventBus.getDefault().register(this);
         smartLayout = mRootView.findViewById(R.id.smart_layout);
         recyclerView = mRootView.findViewById(R.id.recycler_view);
         procontentEt = mRootView.findViewById(R.id.procontent_et);
-        /*smartLayout.setRefreshHeader(new MaterialHeader(getActivity()).setColorSchemeColors(R.color.colorAccent));
-        smartLayout.setRefreshHeader(new MaterialHeader(getActivity()).setShowBezierWave(true));*/
-        //设置 Footer 为 球脉冲
         smartLayout.setRefreshFooter(new BallPulseFooter(getActivity()).setSpinnerStyle(SpinnerStyle.Scale));
         inflater=LayoutInflater.from(getActivity());
         smartLayout.autoRefresh(500);
@@ -203,62 +202,25 @@ public class OneFragment extends BaseMvpFragment<HomeConstract.ProductModel, Hom
             strings.add(icon);
         }
 
-
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-        homeAdapter = new HomeAdapter(R.layout.product_item_layout, homeBean.getData().getTuijian().getList(),getActivity());
-        recyclerView.setAdapter(homeAdapter);
-
-        homeAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                Intent intent = new Intent(getContext(), DetailsActivity.class);
-                String detailUrl = homeBean.getData().getTuijian().getList().get(position).getDetailUrl();
-                EventBus.getDefault().postSticky(detailUrl);
-                startActivity(intent);
-            }
-        });
-        //轮播图
-        View banner_layout = getLayoutInflater().inflate(R.layout.baner_layout, (ViewGroup) recyclerView.getParent(), false);
-        banner_1 = banner_layout.findViewById(R.id.banner_1);
-        homeAdapter.addHeaderView(banner_layout);
-
-        banner_1.setData(strings);
-        banner_1.setmAdapter(this);
-
-        banner_1.setOnItemClickListener(new XBanner.OnItemClickListener() {
-            @Override
-            public void onItemClick(XBanner banner, int position) {
-
-                Intent intent = new Intent(getContext(), DetailsActivity.class);
-                String detailUrls = homeBean.getData().getBanner().get(position).getUrl();
-                Toast.makeText(getContext(), detailUrls, Toast.LENGTH_SHORT).show();
-                //Toast.makeText(mActivity, detailUrl, Toast.LENGTH_SHORT).show();
-                //intent.putExtra("details",detailUrls);
-                EventBus.getDefault().postSticky(detailUrls);
-                startActivity(intent);
-            }
-        });
-
-
+        //为你推荐
+        showRecyclerView(homeBean);
+        //xbanner轮播图
+        banner(homeBean);
+        //分类九宫格实现
         classes(homeBean);
+        //快报
+        newsFlash();
 
-        marqueeLayout = getLayoutInflater().inflate(R.layout.marquee_layout, (ViewGroup) recyclerView.getParent(), false);
+        seckill(homeBean);
 
-        List<String> info = new ArrayList<>();
-        info.add("1. 大家好，我是孙福生。");
-        info.add("2. 欢迎大家关注我哦！");
-        info.add("3. GitHub帐号：sfsheng0322");
-        info.add("4. 新浪微博：孙福生微博");
-        info.add("5. 个人博客：sunfusheng.com");
-        info.add("6. 微信公众号：孙福生");
 
-        marqueeView = marqueeLayout.findViewById(R.id.marqueeView);
+        inflate = getLayoutInflater().inflate(R.layout.weinituijian, (ViewGroup) recyclerView.getParent(), false);
 
-        marqueeView.startWithList(info);
-        marqueeView.startWithList(info, R.anim.anim_bottom_in, R.anim.anim_top_out);
+        homeAdapter.addHeaderView(inflate);
 
-        homeAdapter.addHeaderView(marqueeLayout);
+    }
 
+    private void seckill(final HomeBean homeBean) {
         miaoshaLayout = getLayoutInflater().inflate(R.layout.time_miaosha_layout, (ViewGroup) recyclerView.getParent(), false);
 
         miaosha_time = miaoshaLayout.findViewById(R.id.tv_miaosha_time);
@@ -289,12 +251,66 @@ public class OneFragment extends BaseMvpFragment<HomeConstract.ProductModel, Hom
                 startActivity(intent);
             }
         });
+
         homeAdapter.addHeaderView(scrollLayout);
+    }
 
-        inflate = getLayoutInflater().inflate(R.layout.weinituijian, (ViewGroup) recyclerView.getParent(), false);
+    private void newsFlash() {
+        marqueeLayout = getLayoutInflater().inflate(R.layout.marquee_layout, (ViewGroup) recyclerView.getParent(), false);
 
-        homeAdapter.addHeaderView(inflate);
+        List<String> info = new ArrayList<>();
+        info.add("大促销下单拆福袋，亿万新年红包随便拿");
+        info.add("家电五折团，抢十亿无门槛现金红包");
+        info.add("星球大战剃须刀首发送200元代金券");
 
+        marqueeView = marqueeLayout.findViewById(R.id.marqueeView);
+
+        marqueeView.startWithList(info);
+        marqueeView.startWithList(info, R.anim.anim_bottom_in, R.anim.anim_top_out);
+
+        homeAdapter.addHeaderView(marqueeLayout);
+    }
+
+    private void showRecyclerView(final HomeBean homeBean) {
+
+
+
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        homeAdapter = new HomeAdapter(R.layout.product_item_layout, homeBean.getData().getTuijian().getList(),getActivity());
+        recyclerView.setAdapter(homeAdapter);
+
+        homeAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                Intent intent = new Intent(getContext(), DetailsActivity.class);
+                String detailUrl = homeBean.getData().getTuijian().getList().get(position).getDetailUrl();
+                EventBus.getDefault().postSticky(detailUrl);
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void banner(final HomeBean homeBean) {
+        View banner_layout = getLayoutInflater().inflate(R.layout.baner_layout, (ViewGroup) recyclerView.getParent(), false);
+        banner_1 = banner_layout.findViewById(R.id.banner_1);
+        homeAdapter.addHeaderView(banner_layout);
+
+        banner_1.setData(strings);
+        banner_1.setmAdapter(this);
+
+        banner_1.setOnItemClickListener(new XBanner.OnItemClickListener() {
+            @Override
+            public void onItemClick(XBanner banner, int position) {
+
+                Intent intent = new Intent(getContext(), DetailsActivity.class);
+                String detailUrls = homeBean.getData().getBanner().get(position).getUrl();
+                Toast.makeText(getContext(), detailUrls, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(mActivity, detailUrl, Toast.LENGTH_SHORT).show();
+                //intent.putExtra("details",detailUrls);
+                EventBus.getDefault().postSticky(detailUrls);
+                startActivity(intent);
+            }
+        });
     }
 
     //秒杀倒计时
@@ -312,7 +328,7 @@ public class OneFragment extends BaseMvpFragment<HomeConstract.ProductModel, Hom
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         Log.i("hour",hour+"");
         if (hour % 2 == 0) {
-            miaosha_time.setText( hour+9+ "点场");
+            miaosha_time.setText( hour+ "点场");
             buffer.append((hour + 2));
             buffer.append(":00:00");
         } else if(hour+8==24){
@@ -322,7 +338,7 @@ public class OneFragment extends BaseMvpFragment<HomeConstract.ProductModel, Hom
             buffer.append(":00:00");
 
         }else {
-            miaosha_time.setText(hour+9 + "点场");
+            miaosha_time.setText(hour + "点场");
             buffer.append((hour + 1));
             buffer.append(":00:00");
         }
@@ -354,15 +370,23 @@ public class OneFragment extends BaseMvpFragment<HomeConstract.ProductModel, Hom
 
     private void classes(HomeBean homeBean) {
 
+        view_grid = (ViewPager) getLayoutInflater().inflate(R.layout.view_grid, (ViewGroup) recyclerView.getParent(), false);
 
+        totalPage = (int) Math.ceil(homeBean.getData().getFenlei().size() * 1.0 / mPageSize);
+        viewPagerList = new ArrayList<>();
+        for (int i = 0; i < totalPage; i++) {
+            classesView = (GridView) inflater.inflate(R.layout.classes_layout, (ViewGroup) view_grid.getParent(), false);
 
-        View view_grid = View.inflate(getContext(), R.layout.view_grid, null);
-        View.inflate(getContext(),R.layout.classes_layout,null);
-        homeViewpager = view_grid.findViewById(R.id.home_viewpager);
+            classGridAdapter = new ClassGridAdapter(getContext(), i,mPageSize, homeBean.getData().getFenlei());
+
+            classesView.setAdapter(classGridAdapter);
+            viewPagerList.add(classesView);
+        }
+
         myViewPagerAdapter = new MyViewPagerAdapter(viewPagerList);
 
-        homeViewpager.setAdapter(myViewPagerAdapter);
-        homeViewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        view_grid.setAdapter(myViewPagerAdapter);
+        view_grid.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -379,23 +403,9 @@ public class OneFragment extends BaseMvpFragment<HomeConstract.ProductModel, Hom
             }
         });
 
-        //LayoutInflater inflater = LayoutInflater.from(getActivity());
-        //总的页数，取整（这里有三种类型：Math.ceil(3.5)=4:向上取整，只要有小数都+1  Math.floor(3.5)=3：向下取整  Math.round(3.5)=4:四舍五入）
-        totalPage = (int) Math.ceil(homeBean.getData().getFenlei().size() * 1.0 / mPageSize);
-        //Toast.makeText(getContext(), totalPage+"", Toast.LENGTH_SHORT).show();
-        viewPagerList = new ArrayList<>();
-        for (int i = 0; i < totalPage; i++) {
-            //每个页面都是inflate出一个新实例
-            /*GridView gridView = (GridView) inflater.inflate(R.layout.classes_layout,((TextHolder2) holder).home_viewPager,false);
-            gridView.setAdapter(new MyGridViewAdapter(context,i,mPageSize,data.getFenlei()));*/
-            classesView = (GridView) inflater.inflate(R.layout.classes_layout, homeViewpager, false);
-            classes_grid = classesView.findViewById(R.id.home_viewpager_gridView);
+        homeAdapter.addHeaderView(view_grid);
 
-            classGridAdapter = new ClassGridAdapter(getContext(), mPageSize,i, homeBean.getData().getFenlei());
-            classesView.setAdapter(classGridAdapter);
-            homeAdapter.addHeaderView(classes_grid);
-            viewPagerList.add(classes_grid);
-        }
+
     }
 
     @Override

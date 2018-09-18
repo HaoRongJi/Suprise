@@ -13,20 +13,21 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:src="@drawable/jingdongkuaibao"
-            android:layout_width="25dp"
+            android:src="@drawable/qq_kuaibao"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent" />
-        <ImageView
+        <!--<ImageView
             android:src="@drawable/kuaibao"
             android:layout_marginLeft="-5dp"
             android:layout_width="25dp"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent" />-->
 
         <com.sunfusheng.marqueeview.MarqueeView
             android:id="@+id/marqueeView"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center"
+            android:layout_marginLeft="20dp"
             app:mvAnimDuration="1000"
             app:mvDirection="bottom_to_top"
             app:mvInterval="3000"

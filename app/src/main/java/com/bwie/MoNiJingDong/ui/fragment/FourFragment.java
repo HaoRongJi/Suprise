@@ -1,40 +1,37 @@
 package com.bwie.MoNiJingDong.ui.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bwie.MoNiJingDong.R;
 import com.bwie.MoNiJingDong.adapter.CartAdapter;
-import com.bwie.MoNiJingDong.adapter.HomeAdapter;
 import com.bwie.MoNiJingDong.constrat.CartContract;
 import com.bwie.MoNiJingDong.entity.CartEventBus;
-import com.bwie.MoNiJingDong.entity.CartsBean;
 import com.bwie.MoNiJingDong.entity.HomeBean;
 import com.bwie.MoNiJingDong.entity.ShowCartsBean;
-import com.bwie.MoNiJingDong.entity.SuccessEntity;
 import com.bwie.MoNiJingDong.model.cart.CartModel;
 import com.bwie.MoNiJingDong.presenter.cart.CartPresenter;
-import com.hao.base.base.mvp.BaseMvpActivity;
+import com.bwie.MoNiJingDong.ui.activity.OrderActivity;
 import com.hao.base.base.mvp.BaseMvpFragment;
 import com.hao.base.base.mvp.BasePresenter;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
 import com.scwang.smartrefresh.layout.footer.BallPulseFooter;
-import com.scwang.smartrefresh.layout.header.BezierRadarHeader;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -43,6 +40,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 public class FourFragment extends BaseMvpFragment<CartModel, CartPresenter> implements CartContract.ICartView {
@@ -58,11 +56,14 @@ public class FourFragment extends BaseMvpFragment<CartModel, CartPresenter> impl
     @BindView(R.id.refreshLayout)
     SmartRefreshLayout refreshLayout;
     Unbinder unbinder;
+    @BindView(R.id.toShop_btn)
+    Button toShopBtn;
+    Unbinder unbinder1;
     private CartAdapter adapter;
     private SharedPreferences sp;
     private boolean isLogin;
     private boolean isLogin1;
-    private boolean isLogin2=false;
+    private boolean isLogin2 = false;
     private List<ShowCartsBean.DataBean> data;
     private CartAdapter adapter1;
     private boolean isLogin3;
@@ -85,14 +86,19 @@ public class FourFragment extends BaseMvpFragment<CartModel, CartPresenter> impl
         if (isLogin1) {
 
 
-            isLogin2=true;
+            isLogin2 = true;
             presenter.cartData("17224");
 
 
-        }else{
+        } else {
 
-            Toast.makeText(getActivity(), "请先登录", Toast.LENGTH_SHORT).show();
 
+            toShopBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getActivity(), "请先登录", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
 
 
@@ -111,14 +117,18 @@ public class FourFragment extends BaseMvpFragment<CartModel, CartPresenter> impl
     }*/
 
 
-
-
     @Override
     protected void initView() {
-        refreshLayout.setRefreshHeader(new BezierRadarHeader(getActivity()).setEnableHorizontalDrag(true));
+        //refreshLayout.setRefreshHeader(new BezierRadarHeader(getActivity()).setEnableHorizontalDrag(true));
         //设置 Footer 为 球脉冲 样式
         refreshLayout.setRefreshFooter(new BallPulseFooter(getActivity()).setSpinnerStyle(SpinnerStyle.Scale));
 
+        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                refreshLayout.finishRefresh(2000);
+            }
+        });
     }
 
 
@@ -146,18 +156,23 @@ public class FourFragment extends BaseMvpFragment<CartModel, CartPresenter> impl
     public void showCartData(CartEventBus cartEventBus) {
         Toast.makeText(getActivity(), cartEventBus.isLogin() + "", Toast.LENGTH_SHORT).show();
         isLogin2 = cartEventBus.isLogin;
-        if (cartEventBus.isLogin){
+        if (cartEventBus.isLogin) {
 
 
             presenter.cartData("17224");
             adapter.notify();
 
 
-        }else{
+        } else {
 
             presenter.cartData("17224");
             adapter.notify();
-            Toast.makeText(getActivity(), "先登录啊小鬼", Toast.LENGTH_SHORT).show();
+            toShopBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getActivity(), "先登录啊小鬼", Toast.LENGTH_SHORT).show();
+                }
+            });
 
         }
 
@@ -167,9 +182,9 @@ public class FourFragment extends BaseMvpFragment<CartModel, CartPresenter> impl
     public void onSuccess(ShowCartsBean showCartsBean) {
         Log.i("productentity", showCartsBean + "");
 
-        Toast.makeText(getActivity(), "isLogin2"+isLogin2, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "isLogin2" + isLogin2, Toast.LENGTH_SHORT).show();
 
-        if (isLogin2){
+        if (isLogin2) {
 
             data = showCartsBean.getData();
 
@@ -178,17 +193,30 @@ public class FourFragment extends BaseMvpFragment<CartModel, CartPresenter> impl
             adapter = new CartAdapter(R.layout.cart_item, data);
             fRecyclerView.setAdapter(adapter);
 
-        }else{
+            toShopBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(getActivity(), OrderActivity.class));
+                }
+            });
 
-            data=null;
+        } else {
+
+            data = null;
 
             fRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             adapter1 = new CartAdapter(R.layout.cart_item, data);
             fRecyclerView.setAdapter(adapter1);
+            toShopBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getActivity(), "请先登录", Toast.LENGTH_SHORT).show();
+                }
+            });
 
         }
 
-        if(data!=null){
+        if (data != null) {
 
 
             fCheckbox.setOnClickListener(new View.OnClickListener() {
@@ -218,7 +246,7 @@ public class FourFragment extends BaseMvpFragment<CartModel, CartPresenter> impl
             });
 
 
-        }else{
+        } else {
 
             fCheckbox.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -227,11 +255,14 @@ public class FourFragment extends BaseMvpFragment<CartModel, CartPresenter> impl
                 }
             });
 
+            toShopBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getActivity(), "请先登录", Toast.LENGTH_SHORT).show();
+                }
+            });
+
         }
-
-
-
-
 
 
     }
@@ -295,5 +326,19 @@ public class FourFragment extends BaseMvpFragment<CartModel, CartPresenter> impl
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // TODO: inflate a fragment view
+        View rootView = super.onCreateView(inflater, container, savedInstanceState);
+        unbinder1 = ButterKnife.bind(this, rootView);
+        return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder1.unbind();
     }
 }

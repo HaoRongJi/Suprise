@@ -30,9 +30,12 @@
         <com.scwang.smartrefresh.layout.SmartRefreshLayout
             android:id="@+id/refreshLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="match_parent">
+            <com.bwie.MoNiJingDong.widget.MyCartRefreshHeader
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"></com.bwie.MoNiJingDong.widget.MyCartRefreshHeader>
 
-            > <android.support.v7.widget.RecyclerView
+            <android.support.v7.widget.RecyclerView
             android:id="@+id/f_recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
@@ -75,10 +78,12 @@
             />
 
         <Button
+            android:id="@+id/toShop_btn"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:background="#d3d3d3"
+            android:background="@drawable/shape"
             android:layout_marginTop="5dp"
+            android:textStyle="bold"
             android:text="去结算"
             android:layout_alignParentRight="true"
             />

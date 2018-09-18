@@ -35,6 +35,8 @@ public class HomeAdapter extends BaseQuickAdapter<HomeBean.DataBean.TuijianBean.
     private ClassGridAdapter classGridAdapter;
     private View classesView;
     private View view_grid;
+    private double price;
+    private String str;
 
 
     public HomeAdapter(int layoutResId, @Nullable List<HomeBean.DataBean.TuijianBean.ListBeanX> data,Context context) {
@@ -47,7 +49,9 @@ public class HomeAdapter extends BaseQuickAdapter<HomeBean.DataBean.TuijianBean.
     protected void convert(BaseViewHolder helper, HomeBean.DataBean.TuijianBean.ListBeanX item) {
 
         helper.setText(R.id.product_item_tv,item.getTitle());
-        helper.setText(R.id.product_price_tv,"￥"+item.getPrice()+"0");
+        price = item.getPrice();
+        str = String.format("%.2f", price);
+        helper.setText(R.id.product_price_tv,"￥"+str);
         SimpleDraweeView simpleDraweeView = helper.getView(R.id.product_item_iv);
         String[] split = item.getImages().split("\\|");
 

@@ -12,8 +12,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_centerVertical="true"
-            android:layout_marginRight="-30dp"
-            android:layout_toLeftOf="@id/procontent_et"
+            android:layout_marginLeft="0dp"
             android:background="@drawable/ic_arrow_back_black_24dp" />
 
         <EditText
@@ -21,9 +20,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="40dp"
+            android:layout_marginLeft="30dp"
             android:layout_marginTop="20dp"
-            android:layout_marginRight="40dp"
+            android:layout_marginRight="50dp"
             android:background="@drawable/edit_shape"
             android:hint="请输入想搜索的商品" />
 
@@ -31,8 +30,8 @@
             android:id="@+id/search_tv"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_centerInParent="true"
             android:textSize="15sp"
+            android:layout_marginTop="20dp"
             android:layout_marginLeft="-40dp"
             android:layout_toRightOf="@id/procontent_et"
             android:text="搜索" />
