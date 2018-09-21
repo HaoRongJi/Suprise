@@ -8,18 +8,23 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bwie.MoNiJingDong.R;
+import com.bwie.MoNiJingDong.utils.TakePictureManager;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.gyf.barlibrary.ImmersionBar;
 import com.hao.base.base.mvp.BaseMvpActivity;
 import com.hao.base.base.mvp.BasePresenter;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,6 +64,7 @@ public class PersonActivity extends BaseMvpActivity {
     private String birthday1;
     private AlertDialog.Builder builder;
     private String path;
+    private TakePictureManager takePictureManager;
 
     @Override
     public boolean getIsFullScreen() {
@@ -144,10 +150,10 @@ public class PersonActivity extends BaseMvpActivity {
 
 
 
+
         builder = new AlertDialog.Builder(PersonActivity.this);
 
-        builder.setIcon(R.mipmap.ic_launcher)
-                .setTitle("选择图片：")
+        builder.setTitle("在以下方式中选择：")
                 .setItems(
                         new String[] { "相机", "相册" },
                         new android.content.DialogInterface.OnClickListener() {
@@ -177,69 +183,54 @@ public class PersonActivity extends BaseMvpActivity {
 
     }
 
-    private void picFromPic() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
 
-        startActivityForResult(intent, 1);
+
+    private void picFromPic() {
+
+        takePictureManager = new TakePictureManager(this);
+        takePictureManager.setTailor(1, 1, 350, 350);
+        takePictureManager.startTakeWayByAlbum();
+        takePictureManager.setTakePictureCallBackListener(new TakePictureManager.takePictureCallBackListener() {
+            @Override
+            public void successful(boolean isTailor, File outFile, Uri filePath) {
+                Picasso.with(PersonActivity.this).load(outFile).error(R.mipmap.ic_launcher).into(settx);
+            }
+
+            @Override
+            public void failed(int errorCode, List<String> deniedPermissions) {
+
+            }
+
+        });
+
     }
 
     private void picFromCam() {
 
-        path="";
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(path)));
+        takePictureManager = new TakePictureManager(this);
+        //开启裁剪 比例 1:3 宽高 350 350  (默认不裁剪)
+        takePictureManager.setTailor(1, 3, 350, 350);
+        //拍照方式
+        takePictureManager.startTakeWayByCarema();
+        //回调
+        takePictureManager.setTakePictureCallBackListener(new TakePictureManager.takePictureCallBackListener() {
+            //成功拿到图片,isTailor 是否裁剪？ ,outFile 拿到的文件 ,filePath拿到的URl
+            @Override
+            public void successful(boolean isTailor, File outFile, Uri filePath) {
+                Picasso.with(PersonActivity.this).load(outFile).error(R.mipmap.ic_launcher).into(settx);
+            }
 
-        startActivityForResult(intent, 3);
+            //失败回调
+            @Override
+            public void failed(int errorCode, List<String> deniedPermissions) {
+                Log.e("==w",deniedPermissions.toString());
+            }
+        });
+
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1 && resultCode == RESULT_OK) {
 
-            Uri uri = data.getData();
 
-            crop(uri);
-        } else if (requestCode == 2 && resultCode == RESULT_OK) {
-
-            Bitmap bitmap = data.getParcelableExtra("data");
-            settx.setImageBitmap(bitmap);
-        }
-
-        if (requestCode == 3 && resultCode == RESULT_OK) {
-
-            Uri uri = Uri.fromFile(new File(path));
-
-            settx.setImageURI(uri);
-
-            crop(uri);
-        } else if (requestCode == 2 && resultCode == RESULT_OK) {
-
-            Bitmap bitmap = data.getParcelableExtra("data");
-            settx.setImageBitmap(bitmap);
-
-        }
-    }
-
-    private void crop(Uri uri) {
-        Intent intent = new Intent("com.android.camera.action.CROP");
-
-        intent.setDataAndType(uri, "image/*");
-
-        intent.putExtra("crop", true);
-        intent.putExtra("aspectX", 1);
-        intent.putExtra("aspectY", 1);
-
-        intent.putExtra("outputX", 300);
-        intent.putExtra("outputY", 300);
-
-        intent.putExtra("noFaceDetection", false);
-
-        intent.putExtra("return-data", true);
-
-        startActivityForResult(intent, 2);
-    }
 
 
     @OnClick(R.id.phone)
@@ -256,5 +247,19 @@ public class PersonActivity extends BaseMvpActivity {
 
     @OnClick(R.id.birthday)
     public void onBirthdayClicked() {
+    }
+
+    //把本地的onActivityResult()方法回调绑定到对象
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        takePictureManager.attachToActivityForResult(requestCode, resultCode, data);
+    }
+
+    //onRequestPermissionsResult()方法权限回调绑定到对象
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        takePictureManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

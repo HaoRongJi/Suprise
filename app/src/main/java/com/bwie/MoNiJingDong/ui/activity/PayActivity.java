@@ -161,6 +161,8 @@ public class PayActivity extends BaseMvpActivity<OrderContract.IOrderModel, Orde
     public void onSuccessPay(String successPay) {
 
         /*Toast.makeText(this, successPay, Toast.LENGTH_SHORT).show();*/
+        Log.d("PayActivity", successPay);
+
         final String orderInfo = successPay;   // 订单信息
 
         Runnable payRunnable = new Runnable() {

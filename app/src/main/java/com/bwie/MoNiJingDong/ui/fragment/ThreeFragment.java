@@ -19,6 +19,7 @@ import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 
 import com.bwie.MoNiJingDong.R;
+import com.bwie.MoNiJingDong.widget.MyWebChromeClient;
 import com.hao.base.base.BaseFragment;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -42,16 +43,21 @@ public class ThreeFragment extends BaseFragment {
     @Override
     protected void initView() {
         super.initView();
-        webView.loadUrl("https://www.baidu.com/");
-        webView.setWebViewClient(new WebViewClient() {
+
+        MyWebChromeClient myWebChromeClient = new MyWebChromeClient();
+        webView.setWebChromeClient(myWebChromeClient);
+        webView.getSettings().setJavaScriptEnabled(true);
+
+
+        /*webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 view.loadUrl(url);
                 return true;
             }
-        });
+        });*/
+        webView.loadUrl("https://www.baidu.com/");
 
-        webView.getSettings().setJavaScriptEnabled(true);
 
     }
 

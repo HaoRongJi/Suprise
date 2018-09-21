@@ -160,13 +160,13 @@ public class FourFragment extends BaseMvpFragment<CartModel, CartPresenter> impl
 
 
             presenter.cartData("17224");
-            adapter.notify();
+            adapter.notifyDataSetChanged();
 
 
         } else {
 
             presenter.cartData("17224");
-            adapter.notify();
+            adapter.notifyDataSetChanged();
             toShopBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

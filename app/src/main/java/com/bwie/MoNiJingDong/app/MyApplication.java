@@ -2,6 +2,7 @@ package com.bwie.MoNiJingDong.app;
 
 import android.app.Application;
 
+import com.bwie.MoNiJingDong.utils.CrashHandler;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.tencent.bugly.crashreport.CrashReport;
@@ -45,7 +46,8 @@ public class MyApplication extends Application {
             //使用自定义OkHttpClient
             OkHttpUtils.initClient(okHttpClient);
             CrashReport.initCrashReport(getApplicationContext(), "898d0045c7", true);
-
+            CrashHandler crashHandler = CrashHandler.getInstance();
+            crashHandler.init(getApplicationContext());
         }
 
 

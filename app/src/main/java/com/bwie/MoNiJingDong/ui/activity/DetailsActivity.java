@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.bwie.MoNiJingDong.R;
+import com.bwie.MoNiJingDong.widget.MyWebChromeClient;
 import com.hao.base.base.mvp.BaseMvpActivity;
 import com.hao.base.base.mvp.BasePresenter;
 
@@ -21,8 +22,8 @@ public class DetailsActivity extends BaseMvpActivity {
 
     @BindView(R.id.web_view)
     WebView webView;
-    @BindView(R.id.dt_back_img)
-    ImageView dtBackImg;
+    /*@BindView(R.id.dt_back_img)
+    ImageView dtBackImg;*/
     /*@BindView(R.id.inCart)
     Button inCart;
     @BindView(R.id.addCart)
@@ -53,15 +54,20 @@ public class DetailsActivity extends BaseMvpActivity {
     @Subscribe(sticky = true)
     public void showDetails(String details) {
 
+
+        MyWebChromeClient myWebChromeClient = new MyWebChromeClient();
+        webView.setWebChromeClient(myWebChromeClient);
+        webView.getSettings().setJavaScriptEnabled(true);
+
+
         webView.loadUrl(details);
-        webView.setWebViewClient(new WebViewClient() {
+        /*webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 view.loadUrl(url);
                 return true;
             }
-        });
-        webView.getSettings().setJavaScriptEnabled(true);
+        });*/
 
 
     }
@@ -95,10 +101,10 @@ public class DetailsActivity extends BaseMvpActivity {
 
 
 
-    @OnClick(R.id.dt_back_img)
+   /* @OnClick(R.id.dt_back_img)
     public void onDtBackImgClicked() {
         finish();
-    }
+    }*/
 
     /*@OnClick(R.id.inCart)
     public void onInCartClicked() {

@@ -157,7 +157,6 @@ public class OneFragment extends BaseMvpFragment<HomeConstract.ProductModel, Hom
     protected void initData() {
         super.initData();
         presenter.homeData();
-
     }
 
     @Override
